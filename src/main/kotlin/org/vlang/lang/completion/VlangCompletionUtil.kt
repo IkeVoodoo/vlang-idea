@@ -486,6 +486,11 @@ object VlangCompletionUtil {
     class FunctionInsertHandler(private val function: VlangSignatureOwner, moduleName: String?) : ElementInsertHandler(moduleName) {
         override fun handleInsertion(context: InsertionContext, item: LookupElement) {
             val caretOffset = context.editor.caretModel.offset
+
+            if (caretOffset > context.editor.document.textLength) {
+                return
+            }
+
             val takeZeroArguments = VlangCodeInsightUtil.takeZeroArguments(function)
             val isGeneric = function.genericParameters != null
 
