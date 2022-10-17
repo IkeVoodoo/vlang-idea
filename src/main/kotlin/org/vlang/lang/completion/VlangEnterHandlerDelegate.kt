@@ -31,10 +31,6 @@ class VlangEnterHandlerDelegate : EnterHandlerDelegate {
 
         val element = file.findElementAt(offset - 2) ?: return EnterHandlerDelegate.Result.Continue
         if (element.parent is VlangFile) {
-            if (!editor.document.isWritable) {
-                return EnterHandlerDelegate.Result.Stop
-            }
-
             if (offset > editor.document.textLength) {
                 return EnterHandlerDelegate.Result.Stop
             }
