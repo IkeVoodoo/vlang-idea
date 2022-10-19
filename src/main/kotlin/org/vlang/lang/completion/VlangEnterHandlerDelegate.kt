@@ -23,11 +23,6 @@ class VlangEnterHandlerDelegate : EnterHandlerDelegate {
     }
 
     override fun postProcessEnter(file: PsiFile, editor: Editor, dataContext: DataContext): EnterHandlerDelegate.Result {
-        // Ensure that the caret is valid before attempting anything with it
-        if(!editor.caretModel.currentCaret.isValid) {
-            return EnterHandlerDelegate.Result.Continue;
-        }
-
         val offset = editor.caretModel.currentCaret.offset
 
         val document = editor.document
@@ -36,9 +31,6 @@ class VlangEnterHandlerDelegate : EnterHandlerDelegate {
         if (startOffsetForLine == offset) {
             return EnterHandlerDelegate.Result.Continue
         }
-
-        // findElementAt could throw an IndexOutOfBoundsException for an invalid offset
-        if (offset > file.endOffset) return EnterHandlerDelegate.Result.Continue
 
         val element = file.findElementAt(offset - 2) ?: return EnterHandlerDelegate.Result.Continue
         if (element.parent is VlangFile) {
