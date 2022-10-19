@@ -6,9 +6,11 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiFile
+import com.intellij.refactoring.suggested.endOffset
 import org.vlang.lang.psi.VlangFile
 
 class VlangEnterHandlerDelegate : EnterHandlerDelegate {
+
     override fun preprocessEnter(
         file: PsiFile,
         editor: Editor,
@@ -21,7 +23,13 @@ class VlangEnterHandlerDelegate : EnterHandlerDelegate {
     }
 
     override fun postProcessEnter(file: PsiFile, editor: Editor, dataContext: DataContext): EnterHandlerDelegate.Result {
+        // Ensure that the caret is valid before attempting anything with it
+        if(!editor.caretModel.currentCaret.isValid) {
+            return EnterHandlerDelegate.Result.Continue;
+        }
+
         val offset = editor.caretModel.currentCaret.offset
+
         val document = editor.document
         val line = document.getLineNumber(offset)
         val startOffsetForLine = document.getLineStartOffset(line)
@@ -29,7 +37,8 @@ class VlangEnterHandlerDelegate : EnterHandlerDelegate {
             return EnterHandlerDelegate.Result.Continue
         }
 
-
+        // findElementAt could throw an IndexOutOfBoundsException for an invalid offset
+        if (offset > file.endOffset) return EnterHandlerDelegate.Result.Continue
 
         val element = file.findElementAt(offset - 2) ?: return EnterHandlerDelegate.Result.Continue
         if (element.parent is VlangFile) {
