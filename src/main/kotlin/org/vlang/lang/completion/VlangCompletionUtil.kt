@@ -13,12 +13,15 @@ import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.codeInsight.template.impl.ConstantNode
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.ex.util.LexerEditorHighlighter
+import com.intellij.openapi.editor.ex.util.LexerEditorHighlighter.InvalidStateException
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveState
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parentOfType
+import org.apache.xerces.dom.DocumentImpl
 import org.vlang.ide.codeInsight.VlangCodeInsightUtil
 import org.vlang.ide.ui.VIcons
 import org.vlang.lang.VlangTypes
@@ -500,9 +503,14 @@ object VlangCompletionUtil {
             val withLeftBracketParenAfterCursor = prevChar == '['
 
             if (!withParenAfterCursor && !isGeneric) {
-                context.document.insertString(caretOffset, "()")
+                try {
+                    context.document.insertString(caretOffset, "()")
+                } catch (ex: InvalidStateException) {
+                    // TODO either handle exception or find a fix for the exception, I was unable to find a fix.
+                }
             }
-            if (!withLeftBracketParenAfterCursor && isGeneric) {
+
+           if (!withLeftBracketParenAfterCursor && isGeneric) {
                 val endVariable = if (!takeZeroArguments) "\$END$" else ""
                 genericParametersInsertHandler(function.genericParameters!!, "($endVariable)")
                     .handleInsert(context, item)
@@ -512,6 +520,7 @@ object VlangCompletionUtil {
                 context.editor.caretModel.moveToOffset(caretOffset + 2)
                 return
             }
+
             context.editor.caretModel.moveToOffset(caretOffset + 1)
         }
     }
