@@ -13,7 +13,6 @@ import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.codeInsight.template.impl.ConstantNode
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.ex.util.LexerEditorHighlighter
 import com.intellij.openapi.editor.ex.util.LexerEditorHighlighter.InvalidStateException
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
@@ -21,7 +20,7 @@ import com.intellij.psi.ResolveState
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.intellij.psi.util.parentOfType
-import org.apache.xerces.dom.DocumentImpl
+import org.vlang.configurations.VlangConfigurationUtil
 import org.vlang.ide.codeInsight.VlangCodeInsightUtil
 import org.vlang.ide.ui.VIcons
 import org.vlang.lang.VlangTypes
@@ -508,6 +507,7 @@ object VlangCompletionUtil {
                 } catch (ex: InvalidStateException) {
                     // TODO either handle exception or find a fix for the exception, I was unable to find a fix.
                 }
+                VlangConfigurationUtil
             }
 
            if (!withLeftBracketParenAfterCursor && isGeneric) {

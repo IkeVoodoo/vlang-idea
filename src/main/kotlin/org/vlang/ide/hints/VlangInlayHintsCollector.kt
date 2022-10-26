@@ -26,7 +26,7 @@ class VlangInlayHintsCollector(
     private val textMetricsStorage = InlayTextMetricsStorage(editor as EditorImpl)
     private val offsetFromTopProvider = object : InsetValueProvider {
         override val top: Int =
-            (textMetricsStorage.getFontMetrics(false).offsetFromTop()).toInt()
+            textMetricsStorage.getFontMetrics(false).offsetFromTop()
     }
 
     override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
